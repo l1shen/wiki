@@ -45,6 +45,7 @@
           //-         v-list-item-subtitle.overline.grey--text.text--lighten-2 Coming soon
           v-toolbar-title(:class='{ "mx-3": $vuetify.breakpoint.mdAndUp, "mx-1": $vuetify.breakpoint.smAndDown }')
             span.subheading {{title}}
+          a.nav-span(href="http://javascript.docs.lishen.dev")  javascirpt
       v-flex(md4, v-if='$vuetify.breakpoint.mdAndUp')
         v-toolbar.nav-header-inner(color='black', dark, flat)
           slot(name='mid')
@@ -237,12 +238,6 @@
     page-selector(mode='move', v-model='movePageModal', :open-handler='pageMoveRename', :path='path', :locale='locale')
     page-selector(mode='create', v-model='duplicateOpts.modal', :open-handler='pageDuplicateHandle', :path='duplicateOpts.path', :locale='duplicateOpts.locale')
     page-delete(v-model='deletePageModal', v-if='path && path.length')
-
-    .nav-header-dev(v-if='isDevMode')
-      v-icon mdi-alert
-      div
-        .overline DEVELOPMENT VERSION
-        .overline This code base is NOT for production use!
 </template>
 
 <script>
@@ -557,6 +552,10 @@ export default {
 }
 .navHeaderLoading { // To avoid search bar jumping
   width: 22px;
+}
+
+.nav-span {
+  padding-left: 50px;
 }
 
 </style>
