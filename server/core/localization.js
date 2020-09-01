@@ -14,6 +14,7 @@ module.exports = {
   namespaces: [],
   init() {
     this.namespaces = WIKI.data.localeNamespaces
+    console.log('namespaces', this.namespaces)
     this.engine = i18next
     this.engine.init({
       load: 'languageOnly',
@@ -101,6 +102,7 @@ module.exports = {
     await this.loadLocale(WIKI.config.lang.code, { silent })
     if (WIKI.config.lang.namespacing) {
       for (let ns of WIKI.config.lang.namespaces) {
+        console.log(`ns: `, ns)
         await this.loadLocale(ns, { silent })
       }
     }

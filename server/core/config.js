@@ -71,6 +71,7 @@ module.exports = {
     }
 
     WIKI.config = appconfig
+    console.dir(WIKI.config)
     WIKI.data = appdata
     WIKI.version = packageInfo.version
     WIKI.releaseDate = packageInfo.releaseDate

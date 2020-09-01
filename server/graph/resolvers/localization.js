@@ -14,9 +14,10 @@ module.exports = {
     async locales(obj, args, context, info) {
       let remoteLocales = await WIKI.cache.get('locales')
       let localLocales = await WIKI.models.locales.query().select('code', 'isRTL', 'name', 'nativeName', 'createdAt', 'updatedAt', 'availability')
-      remoteLocales = remoteLocales || localLocales
+      remoteLocales = localLocales
       return _.map(remoteLocales, rl => {
         let isInstalled = _.some(localLocales, ['code', rl.code])
+
         return {
           ...rl,
           isInstalled,
@@ -57,7 +58,8 @@ module.exports = {
         WIKI.config.lang.autoUpdate = args.autoUpdate
         WIKI.config.lang.namespacing = args.namespacing
         WIKI.config.lang.namespaces = _.union(args.namespaces, [args.locale])
-
+        console.log('in updateLocale')
+        console.dir(WIKI.config.lang.namespaces)
         const newLocale = await WIKI.models.locales.query().select('isRTL').where('code', args.locale).first()
         WIKI.config.lang.rtl = newLocale.isRTL
 

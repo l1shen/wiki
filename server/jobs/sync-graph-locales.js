@@ -78,6 +78,7 @@ module.exports = async () => {
 
     WIKI.logger.info('Syncing locales with Graph endpoint: [ COMPLETED ]')
   } catch (err) {
+    console.log(err)
     WIKI.logger.error('Syncing locales with Graph endpoint: [ FAILED ]')
     WIKI.logger.error(err.message)
   }

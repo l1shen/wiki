@@ -59,7 +59,7 @@ router.get(['/a', '/a/*'], (req, res, next) => {
  */
 router.get(['/d', '/d/*'], async (req, res, next) => {
   const pageArgs = pageHelper.parsePath(req.path, { stripExt: true })
-  
+
   const versionId = (req.query.v) ? _.toSafeInteger(req.query.v) : 0
 
   const page = await WIKI.models.pages.getPageFromDb({
@@ -108,7 +108,7 @@ router.get(['/e', '/e/*'], async (req, res, next) => {
   }
 
   req.i18n.changeLanguage(pageArgs.locale)
-  
+
   // -> Set Editor Lang
   _.set(res, 'locals.siteConfig.lang', pageArgs.locale)
   _.set(res, 'locals.siteConfig.rtl', req.i18n.dir() === 'rtl')
@@ -239,7 +239,7 @@ router.get(['/h', '/h/*'], async (req, res, next) => {
   if (WIKI.config.lang.namespacing && !pageArgs.explicitLocale) {
     return res.redirect(`/h/${pageArgs.locale}/${pageArgs.path}`)
   }
-  
+
   req.i18n.changeLanguage(pageArgs.locale)
 
   _.set(res, 'locals.siteConfig.lang', pageArgs.locale)
@@ -397,10 +397,11 @@ router.get('/*', async (req, res, next) => {
   const stripExt = _.some(WIKI.data.pageExtensions, ext => _.endsWith(req.path, `.${ext}`))
   const pageArgs = pageHelper.parsePath(req.path, { stripExt })
   const isPage = (stripExt || pageArgs.path.indexOf('.') === -1)
-
+  console.log('isPage', isPage)
   if (isPage) {
     if (WIKI.config.lang.namespacing && !pageArgs.explicitLocale) {
-      return res.redirect(`/${pageArgs.locale}/${pageArgs.path}`)
+      console.log('redirect')
+      // return res.redirect(`/${pageArgs.locale}/${pageArgs.path}`)
     }
 
     req.i18n.changeLanguage(pageArgs.locale)
@@ -530,6 +531,7 @@ router.get('/*', async (req, res, next) => {
         if (effectivePermissions.pages.write) {
           res.status(404).render('new', { path: pageArgs.path, locale: pageArgs.locale })
         } else {
+          console.log('in page 404')
           res.status(404).render('notfound', { action: 'view' })
         }
       }

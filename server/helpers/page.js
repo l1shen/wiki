@@ -37,7 +37,9 @@ module.exports = {
     if (pathParts[0].length === 1) {
       pathParts.shift()
     }
-    if (localeSegmentRegex.test(pathParts[0])) {
+    console.log('path parts', pathParts[0])
+    if (WIKI.config.lang.namespaces.includes(pathParts[0])) {
+      console.dir(WIKI.config.lang.namespaces)
       pathObj.locale = pathParts[0]
       pathObj.explicitLocale = true
       pathParts.shift()
