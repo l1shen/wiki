@@ -37,7 +37,7 @@ module.exports = {
     if (pathParts[0].length === 1) {
       pathParts.shift()
     }
-    console.log('path parts', pathParts[0])
+
     if (WIKI.config.lang.namespaces.includes(pathParts[0])) {
       console.dir(WIKI.config.lang.namespaces)
       pathObj.locale = pathParts[0]
