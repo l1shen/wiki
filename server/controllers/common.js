@@ -400,8 +400,7 @@ router.get('/*', async (req, res, next) => {
   console.log('isPage', isPage)
   if (isPage) {
     if (WIKI.config.lang.namespacing && !pageArgs.explicitLocale) {
-      console.log('redirect')
-      // return res.redirect(`/${pageArgs.locale}/${pageArgs.path}`)
+      return res.redirect(`/${pageArgs.locale}/${pageArgs.path}`)
     }
 
     req.i18n.changeLanguage(pageArgs.locale)
