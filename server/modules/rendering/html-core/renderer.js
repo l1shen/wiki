@@ -225,7 +225,7 @@ module.exports = {
         }
       }
 
-      // -> Add anchor
+      // -> Add anchor`
       $(elm).attr('id', headerSlug).addClass('toc-header')
       $(elm).prepend(`<a class="toc-anchor" href="#${headerSlug}">&#xB6;</a> `)
 
