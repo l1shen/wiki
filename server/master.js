@@ -156,6 +156,7 @@ module.exports = async () => {
       logoUrl: WIKI.config.logoUrl
     }
     res.locals.langs = await WIKI.models.locales.getNavLocales({ cache: true })
+    res.locals.namesapces = WIKI.config.namespaces
     res.locals.analyticsCode = await WIKI.models.analytics.getCode({ cache: true })
     next()
   })

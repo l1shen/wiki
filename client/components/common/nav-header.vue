@@ -24,8 +24,7 @@
             v-img.org-logo(:src='logoUrl')
           v-toolbar-title(:class='{ "mx-3": $vuetify.breakpoint.mdAndUp, "mx-1": $vuetify.breakpoint.smAndDown }')
             span.subheading {{title}}
-          a.nav-span(href="/javascript-zh/home")  javascirpt
-          a.nav-span(href="/ios-zh/home")  ios
+          a.nav-span(v-for="namespace of namespaces" :href="`/${namespace.toLowerCase()}-${realLocale}/home`") {{ namespace }}
       v-flex(md4, v-if='$vuetify.breakpoint.mdAndUp')
         v-toolbar.nav-header-inner(color='black', dark, flat)
           slot(name='mid')
@@ -94,7 +93,7 @@
               v-list(nav)
                 template(v-for='(lc, idx) of locales')
                   v-list-item(@click='changeLocale(lc)')
-                    v-list-item-action(style='min-width:auto;'): v-chip(:color='lc.code === locale ? `blue` : `grey`', small, label, dark) {{lc.code.toUpperCase()}}
+                    v-list-item-action(style='min-width:auto;'): v-chip(:color='lc.code === locale ? `blue` : `grey`', small, label, dark) {{lc.code.split('-')[1].toUpperCase()}}
                     v-list-item-title {{lc.name}}
             v-divider(vertical)
 
@@ -252,6 +251,7 @@ export default {
       movePageModal: false,
       deletePageModal: false,
       locales: siteLangs,
+      namespaces: namespaces,
       isDevMode: false,
       duplicateOpts: {
         locale: 'en',
@@ -310,6 +310,9 @@ export default {
     hasAnyPagePermissions () {
       return this.hasAdminPermission || this.hasWritePagesPermission || this.hasManagePagesPermission ||
         this.hasDeletePagesPermission || this.hasReadSourcePermission || this.hasReadHistoryPermission
+    },
+    realLocale (){
+      return this.locale.split('-')[1]
     }
   },
   created () {
