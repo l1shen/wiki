@@ -1,33 +1,5 @@
 <template lang="pug">
   div
-    .pa-3.d-flex(v-if='navMode === `MIXED`', :class='$vuetify.theme.dark ? `grey darken-5` : `blue darken-3`')
-      v-btn(
-        depressed
-        :color='$vuetify.theme.dark ? `grey darken-4` : `blue darken-2`'
-        style='min-width:0;'
-        @click='goHome'
-        :aria-label='$t(`common:header.home`)'
-        )
-        v-icon(size='20') mdi-home
-      v-btn.ml-3(
-        v-if='currentMode === `custom`'
-        depressed
-        :color='$vuetify.theme.dark ? `grey darken-4` : `blue darken-2`'
-        style='flex: 1 1 100%;'
-        @click='switchMode(`browse`)'
-        )
-        v-icon(left) mdi-file-tree
-        .body-2.text-none {{$t('common:sidebar.browse')}}
-      v-btn.ml-3(
-        v-else-if='currentMode === `browse`'
-        depressed
-        :color='$vuetify.theme.dark ? `grey darken-4` : `blue darken-2`'
-        style='flex: 1 1 100%;'
-        @click='switchMode(`custom`)'
-        )
-        v-icon(left) mdi-navigation
-        .body-2.text-none {{$t('common:sidebar.mainMenu')}}
-    v-divider
     //-> Custom Navigation
     v-list.py-2(v-if='currentMode === `custom`', dense, :class='color', :dark='dark')
       template(v-for='item of items')
@@ -37,34 +9,12 @@
           :target='item.y === `externalblank` ? `_blank` : `_self`'
           :rel='item.y === `externalblank` ? `noopener` : ``'
           )
-          v-list-item-avatar(size='24', tile)
-            v-icon(v-if='item.c.match(/fa[a-z] fa-/)', size='19') {{ item.c }}
-            v-icon(v-else) {{ item.c }}
-          v-list-item-title {{ item.l }}
-        v-divider.my-2(v-else-if='item.k === `divider`')
-        v-subheader.pl-4(v-else-if='item.k === `header`') {{ item.l }}
+          v-list-item-title
+            span(class='netless-test-2') {{ item.l }}
+        v-divider.my-2(v-else-if='item.k === `divider`', class='netless-test-5')
+        v-subheader.pl-4(v-else-if='item.k === `header`')
+          span(class='netless-test-4')  {{ item.l }}
     //-> Browse
-    v-list.py-2(v-else-if='currentMode === `browse`', dense, :class='color', :dark='dark')
-      template(v-if='currentParent.id > 0')
-        v-list-item(v-for='(item, idx) of parents', :key='`parent-` + item.id', @click='fetchBrowseItems(item)', style='min-height: 30px;')
-          v-list-item-avatar(size='18', :style='`padding-left: ` + (idx * 8) + `px; width: auto; margin: 0 5px 0 0;`')
-            v-icon(small) mdi-folder-open
-          v-list-item-title {{ item.title }}
-        v-divider.mt-2
-        v-list-item.mt-2(v-if='currentParent.pageId > 0', :href='`/` + currentParent.path', :key='`directorypage-` + currentParent.id', :input-value='path === currentParent.path')
-          v-list-item-avatar(size='24')
-            v-icon mdi-text-box
-          v-list-item-title {{ currentParent.title }}
-        v-subheader.pl-4 {{$t('common:sidebar.currentDirectory')}}
-      template(v-for='item of currentItems')
-        v-list-item(v-if='item.isFolder', :key='`childfolder-` + item.id', @click='fetchBrowseItems(item)')
-          v-list-item-avatar(size='24')
-            v-icon mdi-folder
-          v-list-item-title {{ item.title }}
-        v-list-item(v-else, :href='`/` + item.locale + `/` + item.path', :key='`childpage-` + item.id', :input-value='path === item.path')
-          v-list-item-avatar(size='24')
-            v-icon mdi-text-box
-          v-list-item-title {{ item.title }}
 </template>
 
 <script>

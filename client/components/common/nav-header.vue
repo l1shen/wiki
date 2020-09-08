@@ -18,44 +18,16 @@
         autocomplete='off'
       )
     v-layout(row)
-      v-flex(xs5, md4)
+      v-flex(xs5, md6)
         v-toolbar.nav-header-inner(color='black', dark, flat, :class='$vuetify.rtl ? `pr-3` : `pl-3`')
-          v-avatar(tile, size='34', @click='goHome')
-            v-img.org-logo(:src='logoUrl')
+          v-avatar(tile, width='87', @click='goHome')
+            img.org-logo(:src='logoUrl')
           v-toolbar-title(:class='{ "mx-3": $vuetify.breakpoint.mdAndUp, "mx-1": $vuetify.breakpoint.smAndDown }')
             span.subheading {{title}}
-          a.nav-span(v-for="namespace of namespaces" :href="`/${namespace.toLowerCase()}-${realLocale}/home`") {{ namespace }}
-      v-flex(md4, v-if='$vuetify.breakpoint.mdAndUp')
-        v-toolbar.nav-header-inner(color='black', dark, flat)
-          slot(name='mid')
-            transition(name='navHeaderSearch', v-if='searchIsShown')
-              v-text-field(
-                ref='searchField',
-                v-if='searchIsShown && $vuetify.breakpoint.mdAndUp',
-                v-model='search',
-                color='white',
-                :label='$t(`common:header.search`)',
-                single-line,
-                solo
-                flat
-                rounded
-                hide-details,
-                prepend-inner-icon='mdi-magnify',
-                :loading='searchIsLoading',
-                @keyup.enter='searchEnter'
-                @keyup.esc='searchClose'
-                @focus='searchFocus'
-                @blur='searchBlur'
-                @keyup.down='searchMove(`down`)'
-                @keyup.up='searchMove(`up`)'
-                autocomplete='off'
-              )
-            v-tooltip(bottom)
-              template(v-slot:activator='{ on }')
-                v-btn.ml-2.mr-0(icon, v-on='on', href='/t', :aria-label='$t(`common:header.browseTags`)')
-                  v-icon(color='grey') mdi-tag-multiple
-              span {{$t('common:header.browseTags')}}
-      v-flex(xs7, md4)
+          div.nav-div
+            a.link-style(v-for="namespace of namespaces" :href="`/${namespace.toLowerCase()}-${realLocale}/home`")
+              div.nav-span {{ namespace }}
+      v-flex(xs7, md6)
         v-toolbar.nav-header-inner.pr-4(color='black', dark, flat)
           v-spacer
           .navHeaderLoading.mr-3
@@ -69,10 +41,34 @@
             v-if='!hideSearch && $vuetify.breakpoint.smAndDown'
             @click='searchToggle'
             icon
-            )
+          )
             v-icon(color='grey') mdi-magnify
 
           //- LANGUAGES
+          v-toolbar.nav-header-inner(color='black', dark, flat, v-if='$vuetify.breakpoint.mdAndUp')
+            slot(name='mid')
+              transition(name='navHeaderSearch', v-if='searchIsShown')
+                v-text-field(
+                  ref='searchField',
+                  v-if='searchIsShown && $vuetify.breakpoint.mdAndUp',
+                  v-model='search',
+                  color='white',
+                  :label='$t(`common:header.search`)',
+                  single-line,
+                  solo
+                  flat
+                  rounded
+                  hide-details,
+                  prepend-inner-icon='mdi-magnify',
+                  :loading='searchIsLoading',
+                  @keyup.enter='searchEnter'
+                  @keyup.esc='searchClose'
+                  @focus='searchFocus'
+                  @blur='searchBlur'
+                  @keyup.down='searchMove(`down`)'
+                  @keyup.up='searchMove(`up`)'
+                  autocomplete='off'
+                )
 
           template(v-if='mode === `view` && locales.length > 0')
             v-menu(offset-y, bottom, transition='slide-y-transition', max-height='320px', min-width='210px', left)
@@ -87,13 +83,13 @@
                       tile
                       height='64'
                       :aria-label='$t(`common:header.language`)'
-                      )
+                    )
                       v-icon(color='grey') mdi-web
                   span {{$t('common:header.language')}}
               v-list(nav)
                 template(v-for='(lc, idx) of locales')
                   v-list-item(@click='changeLocale(lc)')
-                    v-list-item-action(style='min-width:auto;'): v-chip(:color='lc.code === locale ? `blue` : `grey`', small, label, dark) {{lc.code.split('-')[1].toUpperCase()}}
+                    v-list-item-action(style='min-width:auto;'): v-chip(:color='lc.code === locale ? `blue` : `grey`', small, label, dark) {{lc.code.split('-')[1] || lc.code.split('-')[0].toUpperCase()}}
                     v-list-item-title {{lc.name}}
             v-divider(vertical)
 
@@ -112,7 +108,7 @@
                       tile
                       height='64'
                       :aria-label='$t(`common:header.pageActions`)'
-                      )
+                    )
                       v-icon(color='grey') mdi-file-document-edit-outline
                   span {{$t('common:header.pageActions')}}
               v-list(nav, :light='!$vuetify.theme.dark', :dark='$vuetify.theme.dark', :class='$vuetify.theme.dark ? `grey darken-4` : ``')
@@ -179,7 +175,7 @@
                     tile
                     height='64'
                     :aria-label='$t(`common:header.account`)'
-                    )
+                  )
                     v-icon(v-if='picture.kind === `initials`', color='grey') mdi-account-circle
                     v-avatar(v-else-if='picture.kind === `image`', :size='34')
                       v-img(:src='picture.url')
@@ -207,12 +203,6 @@
                 v-list-item-action: v-icon(color='red') mdi-logout
                 v-list-item-title.red--text {{$t('common:header.logout')}}
 
-          v-tooltip(v-else, left)
-            template(v-slot:activator='{ on }')
-              v-btn(icon, v-on='on', color='grey darken-3', href='/login', :aria-label='$t(`common:header.login`)')
-                v-icon(color='grey') mdi-account-circle
-            span {{$t('common:header.login')}}
-
     page-selector(mode='create', v-model='newPageModal', :open-handler='pageNewCreate', :locale='locale')
     page-selector(mode='move', v-model='movePageModal', :open-handler='pageMoveRename', :path='path', :locale='locale')
     page-selector(mode='create', v-model='duplicateOpts.modal', :open-handler='pageDuplicateHandle', :path='duplicateOpts.path', :locale='duplicateOpts.locale')
@@ -220,7 +210,7 @@
 </template>
 
 <script>
-import { get, sync } from 'vuex-pathify'
+import {get, sync} from 'vuex-pathify'
 import _ from 'lodash'
 import Cookies from 'js-cookie'
 
@@ -277,7 +267,7 @@ export default {
     pictureUrl: get('user/pictureUrl'),
     isAuthenticated: get('user/authenticated'),
     permissions: get('user/permissions'),
-    picture () {
+    picture() {
       if (this.pictureUrl && this.pictureUrl.length > 1) {
         return {
           kind: 'image',
@@ -295,10 +285,10 @@ export default {
         }
       }
     },
-    isAdmin () {
+    isAdmin() {
       return _.intersection(this.permissions, ['manage:system', 'write:users', 'manage:users', 'write:groups', 'manage:groups', 'manage:navigation', 'manage:theme', 'manage:api']).length > 0
     },
-    hasNewPagePermission () {
+    hasNewPagePermission() {
       return this.hasAdminPermission || _.intersection(this.permissions, ['write:pages']).length > 0
     },
     hasAdminPermission: get('page/effectivePermissions@system.manage'),
@@ -307,20 +297,23 @@ export default {
     hasDeletePagesPermission: get('page/effectivePermissions@pages.delete'),
     hasReadSourcePermission: get('page/effectivePermissions@source.read'),
     hasReadHistoryPermission: get('page/effectivePermissions@history.read'),
-    hasAnyPagePermissions () {
+    hasAnyPagePermissions() {
       return this.hasAdminPermission || this.hasWritePagesPermission || this.hasManagePagesPermission ||
         this.hasDeletePagesPermission || this.hasReadSourcePermission || this.hasReadHistoryPermission
     },
     realLocale (){
+      if (this.locale.length === 2) {
+        return this.locale
+      }
       return this.locale.split('-')[1]
     }
   },
-  created () {
+  created() {
     if (this.hideSearch || this.dense || this.$vuetify.breakpoint.smAndDown) {
       this.searchIsShown = false
     }
   },
-  mounted () {
+  mounted() {
     this.$root.$on('pageEdit', () => {
       this.pageEdit()
     })
@@ -343,22 +336,28 @@ export default {
     const url = new URL(window.location)
     const path = url.pathname
     const namespace = path.split('/').filter(Boolean)[0].split('-')[0]
+
     this.locales = this.locales.filter(locale => {
-      return locale.code.startsWith(namespace)
+      if (this.locale.length === 2) {
+        return locale.code.length === 2
+      } else {
+        return locale.code.startsWith(namespace)
+      }
+
     })
   },
   methods: {
-    searchFocus () {
+    searchFocus() {
       this.searchIsFocused = true
     },
-    searchBlur () {
+    searchBlur() {
       this.searchIsFocused = false
     },
-    searchClose () {
+    searchClose() {
       this.search = ''
       this.searchBlur()
     },
-    searchToggle () {
+    searchToggle() {
       this.searchIsShown = !this.searchIsShown
       if (this.searchIsShown) {
         _.delay(() => {
@@ -366,31 +365,31 @@ export default {
         }, 200)
       }
     },
-    searchEnter () {
+    searchEnter() {
       this.$root.$emit('searchEnter', true)
     },
     searchMove(dir) {
       this.$root.$emit('searchMove', dir)
     },
-    pageNew () {
+    pageNew() {
       this.newPageModal = true
     },
-    pageNewCreate ({ path, locale }) {
+    pageNewCreate({path, locale}) {
       window.location.assign(`/e/${locale}/${path}`)
     },
-    pageView () {
+    pageView() {
       window.location.assign(`/${this.locale}/${this.path}`)
     },
-    pageEdit () {
+    pageEdit() {
       window.location.assign(`/e/${this.locale}/${this.path}`)
     },
-    pageHistory () {
+    pageHistory() {
       window.location.assign(`/h/${this.locale}/${this.path}`)
     },
-    pageSource () {
+    pageSource() {
       window.location.assign(`/s/${this.locale}/${this.path}`)
     },
-    pageDuplicate () {
+    pageDuplicate() {
       const pathParts = this.path.split('/')
       this.duplicateOpts = {
         locale: this.locale,
@@ -398,13 +397,13 @@ export default {
         modal: true
       }
     },
-    pageDuplicateHandle ({ locale, path }) {
+    pageDuplicateHandle({locale, path}) {
       window.location.assign(`/e/${locale}/${path}?from=${this.$store.get('page/id')}`)
     },
-    pageMove () {
+    pageMove() {
       this.movePageModal = true
     },
-    async pageMoveRename ({ path, locale }) {
+    async pageMoveRename({path, locale}) {
       this.$store.commit(`loadingStart`, 'page-move')
       try {
         const resp = await this.$apollo.mutate({
@@ -425,10 +424,10 @@ export default {
         this.$store.commit(`loadingStop`, 'page-move')
       }
     },
-    pageDelete () {
+    pageDelete() {
       this.deletePageModal = true
     },
-    assets () {
+    assets() {
       // window.location.assign(`/f`)
       this.$store.commit('showNotification', {
         style: 'indigo',
@@ -436,7 +435,7 @@ export default {
         icon: 'ferry'
       })
     },
-    async changeLocale (locale) {
+    async changeLocale(locale) {
       await this.$i18n.i18next.changeLanguage(locale.code)
       switch (this.mode) {
         case 'view':
@@ -445,11 +444,11 @@ export default {
           break
       }
     },
-    logout () {
+    logout() {
       Cookies.remove('jwt')
       window.location.assign('/')
     },
-    goHome () {
+    goHome() {
       window.location.assign('/')
     }
   }
@@ -458,93 +457,116 @@ export default {
 
 <style lang='scss'>
 
-.nav-header {
-  //z-index: 1000;
+  .nav-header {
+    //z-index: 1000;
 
-  .v-toolbar__extension {
-    padding: 0;
-
-    .v-toolbar__content {
+    .v-toolbar__extension {
       padding: 0;
-    }
-    .v-text-field .v-input__prepend-inner {
-      padding: 0 14px 0 5px;
-      padding-right: 14px;
-    }
-  }
 
-  .org-logo {
-    cursor: pointer;
-  }
+      .v-toolbar__content {
+        padding: 0;
+      }
 
-  &-inner {
-    .v-toolbar__content {
-      padding: 0;
-    }
-  }
-
-  &-search-adv {
-    position: absolute;
-    top: 7px;
-    right: 12px;
-    border-radius: 4px !important;
-
-    @at-root .v-application--is-rtl & {
-      right: initial;
-      left: 12px;
+      .v-text-field .v-input__prepend-inner {
+        padding: 0 14px 0 5px;
+        padding-right: 14px;
+      }
     }
 
-    &::before {
+    .org-logo {
+      cursor: pointer;
+    }
+
+    &-inner {
+      .v-toolbar__content {
+        padding: 0;
+      }
+    }
+
+    &-search-adv {
+      position: absolute;
+      top: 7px;
+      right: 12px;
       border-radius: 4px !important;
-    }
 
-    &:hover, &:focus {
-      position: absolute !important;
+      @at-root .v-application--is-rtl & {
+        right: initial;
+        left: 12px;
+      }
 
       &::before {
-        border-radius: 4px;
+        border-radius: 4px !important;
+      }
+
+      &:hover, &:focus {
+        position: absolute !important;
+
+        &::before {
+          border-radius: 4px;
+        }
+      }
+    }
+
+    &-dev {
+      background-color: mc('red', '600');
+      position: absolute;
+      top: 11px;
+      left: 255px;
+      padding: 5px 15px;
+      border-radius: 5px;
+      display: flex;
+
+      .v-icon {
+        margin-right: 15px;
+      }
+
+      .overline:nth-child(2) {
+        text-transform: none;
       }
     }
   }
 
-  &-dev {
-    background-color: mc('red', '600');
-    position: absolute;
-    top: 11px;
-    left: 255px;
-    padding: 5px 15px;
-    border-radius: 5px;
+  .navHeaderSearch {
+    &-enter-active, &-leave-active {
+      transition: opacity .25s ease, transform .25s ease;
+      opacity: 1;
+    }
+
+    &-enter-active {
+      transition-delay: .25s;
+    }
+
+    &-enter, &-leave-to {
+      opacity: 0;
+      transform: scale(.7, .7);
+    }
+  }
+
+  .navHeaderLoading { // To avoid search bar jumping
+    width: 22px;
+  }
+
+  .nav-span {
+    /*padding-left: 50px;*/
+    height: 64px;
     display: flex;
-
-    .v-icon {
-      margin-right: 15px;
-    }
-
-    .overline:nth-child(2) {
-      text-transform: none;
-    }
+    align-items: center;
+    justify-content: center;
+    padding-left: 15px;
+    padding-right: 15px;
+    color: white;
+    font-size: 16px;
+    font-weight: 400;
   }
-}
 
-.navHeaderSearch {
-  &-enter-active, &-leave-active {
-    transition: opacity .25s ease, transform .25s ease;
-    opacity: 1;
+  .nav-div {
+    margin-left: 130px;
+    display: flex;
+    flex-direction: row;
   }
-  &-enter-active {
-    transition-delay: .25s;
-  }
-  &-enter, &-leave-to {
-    opacity: 0;
-    transform: scale(.7, .7);
-  }
-}
-.navHeaderLoading { // To avoid search bar jumping
-  width: 22px;
-}
 
-.nav-span {
-  padding-left: 50px;
-}
+  .link-style {
+    text-decoration: none;
+  }
 
 </style>
